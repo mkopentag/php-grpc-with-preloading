@@ -1,0 +1,24 @@
+version: '3.7'
+
+services:
+  php-fpm:
+    cap_add:
+      - ALL
+    security_opt:
+      - seccomp:unconfined
+    container_name: php-fpm-test
+    image: kindratmakc/php-grpc-with-enabled-preloading
+    build:
+      context: .
+      dockerfile: docker/fpm/Dockerfile
+    volumes:
+      - ./:/var/www/project:rw
+  nginx:
+    container_name: php-fpm-nginx
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "11167:80"
+    depends_on:
+      - php-fpm
